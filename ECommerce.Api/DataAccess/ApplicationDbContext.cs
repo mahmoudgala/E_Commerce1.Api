@@ -30,12 +30,7 @@ namespace ECommerce.Api.DataAccess
         //public ApplicationDbContext()
         //{
 
-        //}
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    base.OnConfiguring(optionsBuilder);
-        //    optionsBuilder.UseSqlServer("Data Source=ENG-GALAL\\SQLEXPRESS01;Initial Catalog=ECommerce.Api;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
-        //}
+
 
     }
 }
