@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ECommerce.Api.DTOs.Response
+namespace ECommerce.Api.DTOs.Request
 {
     public class RegisterDTO
     {

@@ -17,13 +17,13 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Scalar.AspNetCore" Version="2.8.5" />
+    <PackageReference Include="Stripe.net" Version="48.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Area\Admin\Controller\" />
     <Folder Include="Area\Chat\Controller\" />
     <Folder Include="Area\Customer\Controller\" />
-    <Folder Include="DTOs\Request\" />
   </ItemGroup>
 
 </Project>

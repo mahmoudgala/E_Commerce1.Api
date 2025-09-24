@@ -1,12 +1,10 @@
-
 using ECommerce.Api.Repositories;
-using ECommerce.Api.Repositories.IRepositories;
-using ECommerce.Api.Utility;
 using ECommerce.Api.Utility.DBInitializer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using Stripe;
 
 namespace ECommerce.Api
 {
@@ -29,7 +27,7 @@ namespace ECommerce.Api
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(o =>
             {
-                o.Password.RequiredLength = 8;
+                o.Password.RequiredLength = 6;
                 o.Password.RequireNonAlphanumeric = false;
                 o.User.RequireUniqueEmail = true;
             })
@@ -42,17 +40,24 @@ namespace ECommerce.Api
 
 
             });
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
 
             builder.Services.AddScoped<IRepository<Cate>, Repository<Cate>>();
             builder.Services.AddScoped<IRepository<Brand>, Repository<Brand>>();
+
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IRepository<UserOTP>, Repository<UserOTP>>();
+
             builder.Services.AddScoped<IDBInitializer, DBInitializer>();
+
             builder.Services.AddScoped<IRepository<Cart>, Repository<Cart>>();
             builder.Services.AddScoped<IRepository<Promotions>, Repository<Promotions>>();
-            builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+            //builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+            //StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
             var app = builder.Build();
 
+            //app.UseStaticFiles();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
             {
@@ -62,8 +67,14 @@ namespace ECommerce.Api
 
             app.UseHttpsRedirection();
 
+
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
+            var scope = app.Services.CreateScope();
+            var service = scope.ServiceProvider.GetService<IDBInitializer>();
+            service.Initialize();
 
             app.MapControllers();
 

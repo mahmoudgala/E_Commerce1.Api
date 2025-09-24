@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Threading.Tasks;
+
+
 namespace ECommerce.Api.Utility.DBInitializer
 {
     public class DBInitializer : IDBInitializer
@@ -37,8 +40,10 @@ namespace ECommerce.Api.Utility.DBInitializer
                 {
                     Email = "Galal@gmail.com",
                     EmailConfirmed = true,
-                    UserName = "Hoda",
+                    UserName = "Galal",
                     Name = "Mahmoud Galal",
+                    FirstName = "Mahmoud",
+                    SecondName = "Galal",
 
                 }, "Galal123").GetAwaiter().GetResult();
                 var user = _userManager.FindByEmailAsync("Galal@gmail.com").GetAwaiter().GetResult();
