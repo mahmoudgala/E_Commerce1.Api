@@ -2,7 +2,7 @@
 
 namespace ECommerce.Api.DTOs.Request
 {
-    public class LoginDTO
+    public class LoginRequest
     {
         [Required]
         public string EmailOrUserName { get; set; } = string.Empty;

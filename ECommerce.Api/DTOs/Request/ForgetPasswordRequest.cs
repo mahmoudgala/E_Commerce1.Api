@@ -2,7 +2,7 @@
 
 namespace ECommerce.Api.DTOs.Request
 {
-    public class ForgetPasswordDTO
+    public class ForgetPasswordRequest
     {
 
         [Required]

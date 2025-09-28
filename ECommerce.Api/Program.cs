@@ -12,13 +12,23 @@ namespace ECommerce.Api
     {
         public static void Main(string[] args)
         {
+            var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  policy =>
+                                  {
+                                      policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                                  });
+            });
 
             // Add services to the container.
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+            //builder.Services.AddOpenApi();
+            builder.Services.AddSwaggerGen();
 
             builder.Services.AddDbContext<ApplicationDbContext>(Option =>
             {
@@ -54,21 +64,23 @@ namespace ECommerce.Api
             builder.Services.AddScoped<IRepository<Promotions>, Repository<Promotions>>();
 
             //builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
-            //StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
             var app = builder.Build();
 
-            //app.UseStaticFiles();
+            app.UseStaticFiles();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
             {
-                app.MapScalarApiReference();
-                app.MapOpenApi();
+                //app.MapScalarApiReference();
+                //app.MapOpenApi();
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
 
             app.UseHttpsRedirection();
 
 
-
+            app.UseCors(MyAllowSpecificOrigins);
             app.UseAuthentication();
             app.UseAuthorization();
 

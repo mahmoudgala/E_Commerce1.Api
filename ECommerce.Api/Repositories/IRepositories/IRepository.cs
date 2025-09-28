@@ -5,7 +5,7 @@ namespace ECommerce.Api.Repositories.IRepositories
 {
     public interface IRepository<T> where T : class
     {
-          Task CreateAsync(T entity);
+          Task<T> CreateAsync(T entity);
 
          void Update(T entity);
 

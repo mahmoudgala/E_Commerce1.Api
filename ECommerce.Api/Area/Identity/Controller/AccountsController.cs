@@ -29,7 +29,7 @@ namespace ECommerce.Api.Area.Identity.Controller
 
         //Register Post
 
-        public async Task<IActionResult> Register(RegisterDTO registerDto)
+        public async Task<IActionResult> Register(RegisterRequest registerDto)
         {
 
             ApplicationUser applicationUser = new()
@@ -77,12 +77,12 @@ namespace ECommerce.Api.Area.Identity.Controller
             });
         }
         [HttpPost("Login")]
-        public async Task<IActionResult> Login(LoginDTO loginDTO)
+        public async Task<IActionResult> Login(LoginRequest loginDTO)
         {
             var user = await _userManager.FindByEmailAsync(loginDTO.EmailOrUserName) ?? await _userManager.FindByNameAsync(loginDTO.EmailOrUserName);
             if (user is null)
             {
-                return BadRequest(new NotificationDTO
+                return BadRequest(new NotificationResponse
                 {
                     MSG = "Invalid User Name or password",
                     TraceId = Guid.NewGuid().ToString(),
@@ -95,13 +95,13 @@ namespace ECommerce.Api.Area.Identity.Controller
             if (!result.Succeeded)
             {
                 if (result.IsLockedOut)
-                    return BadRequest(new NotificationDTO
+                    return BadRequest(new NotificationResponse
                     {
                         MSG = "Too many attempts",
                         TraceId = Guid.NewGuid().ToString(),
                         CreatedAt = DateTime.UtcNow
                     });
-                return NotFound(new NotificationDTO
+                return NotFound(new NotificationResponse
                 {
                     MSG = "Invalid user name or password",
                     TraceId = Guid.NewGuid().ToString(),
@@ -109,20 +109,20 @@ namespace ECommerce.Api.Area.Identity.Controller
                 });
             }
             if (!user.EmailConfirmed)
-                return BadRequest(new NotificationDTO
+                return BadRequest(new NotificationResponse
                 {
                     MSG = "Confirm your Email and try again",
                     TraceId = Guid.NewGuid().ToString(),
                     CreatedAt = DateTime.UtcNow
                 });
             if (!user.LockoutEnabled)
-                return BadRequest(new NotificationDTO
+                return BadRequest(new NotificationResponse
                 {
                     MSG = "You are locked, try again later",
                     TraceId = Guid.NewGuid().ToString(),
                     CreatedAt = DateTime.UtcNow
                 });
-            return Ok(new NotificationDTO
+            return Ok(new NotificationResponse
             {
                 MSG = "Login Successfully",
                 TraceId = Guid.NewGuid().ToString(),
@@ -134,7 +134,7 @@ namespace ECommerce.Api.Area.Identity.Controller
         {
             var user = await _userManager.FindByIdAsync(userId);
             if(user is null)
-                 return NotFound(new NotificationDTO
+                 return NotFound(new NotificationResponse
                     {
                         MSG = "Invalid user name or password",
                         TraceId = Guid.NewGuid().ToString(),
@@ -142,14 +142,14 @@ namespace ECommerce.Api.Area.Identity.Controller
                     });
             var result = await _userManager.ConfirmEmailAsync(user, token);
             if (!result.Succeeded)
-                return BadRequest(new NotificationDTO
+                return BadRequest(new NotificationResponse
                 {
                     MSG = "Link Expired, Resend Email confirm",
                     TraceId = Guid.NewGuid().ToString(),
                     CreatedAt = DateTime.UtcNow
                 });
             else
-                return Ok(new NotificationDTO
+                return Ok(new NotificationResponse
                 {
                     MSG = "Email confirmed successfully",
                     TraceId = Guid.NewGuid().ToString(),
@@ -158,18 +158,19 @@ namespace ECommerce.Api.Area.Identity.Controller
         }
         [HttpGet("ResendEmailConfirmation")]
 
-        public async Task<IActionResult> ResendEmailConfirmation(ResendEmailConfirmationDTO resendEmailConfirmationDTO) 
+        public async Task<IActionResult> ResendEmailConfirmation(ResendEmailConfirmationRequest resendEmailConfirmationDTO) 
         {
             var user = await _userManager.FindByEmailAsync(resendEmailConfirmationDTO.EmailOrUserName) ?? await _userManager.FindByEmailAsync(resendEmailConfirmationDTO.EmailOrUserName);
             if (user is null)
-                return NotFound(new NotificationDTO
+                return NotFound(new NotificationResponse
                 {
                     MSG = "Invalid User name or password",
                     TraceId = Guid.NewGuid().ToString(),
                     CreatedAt = DateTime.UtcNow
                 });
             if(user.EmailConfirmed)
-                return BadRequest(new NotificationDTO
+
+                return BadRequest(new NotificationResponse
                 {
                     MSG = "This Email is already Confirmed",
                     TraceId = Guid.NewGuid().ToString(),
@@ -178,7 +179,7 @@ namespace ECommerce.Api.Area.Identity.Controller
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var link = Url.Action("ConfirmEmail", "Accounts", new { area = "Identity", token = token, userId = user.Id }, Request.Scheme);
             await _emailSender.SendEmailAsync(user.Email, "Confirm Email", $"<h1>Confirm Your Email By Clicking <a href = '{link}'>Here</a></h1>");
-            return Ok(new NotificationDTO
+            return Ok(new NotificationResponse
             {
                 MSG = "Email Confirmation send Successful",
                 TraceId = Guid.NewGuid().ToString(),
@@ -186,11 +187,11 @@ namespace ECommerce.Api.Area.Identity.Controller
             });
         }
         [HttpPost("ForgetPassword")]
-        public async Task<IActionResult> ForgetPassword(ForgetPasswordDTO forgetPasswordDTO)
+        public async Task<IActionResult> ForgetPassword(ForgetPasswordRequest forgetPasswordDTO)
         {
             var user = await _userManager.FindByEmailAsync(forgetPasswordDTO.EmailOrUserName) ?? await _userManager.FindByNameAsync(forgetPasswordDTO.EmailOrUserName);
             if(user is null)
-                return NotFound(new NotificationDTO
+                return NotFound(new NotificationResponse
                 {
                     MSG = "Invalid User name or password",
                     TraceId = Guid.NewGuid().ToString(),
@@ -214,12 +215,12 @@ namespace ECommerce.Api.Area.Identity.Controller
             });
         }
         [HttpPost("ResetPassword")]
-        public async Task<IActionResult> ResetPassword(ResetPasswordDTO resetPasswordDTO)
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequest resetPasswordDTO)
         {
             var user = await _userManager.FindByIdAsync(resetPasswordDTO.ApplicationUserId);
 
             if (user is null)
-                return NotFound(new NotificationDTO
+                return NotFound(new NotificationResponse
                 {
                     MSG = "Invalid User name or password",
                     TraceId = Guid.NewGuid().ToString(),
@@ -229,14 +230,14 @@ namespace ECommerce.Api.Area.Identity.Controller
             if (userotp == null)
                 return NotFound();
             if (userotp.OTPCode != resetPasswordDTO.OTPCode)
-                return BadRequest(new NotificationDTO
+                return BadRequest(new NotificationResponse
                 {
                     MSG = "Invalid Code",
                     TraceId = Guid.NewGuid().ToString(),
                     CreatedAt = DateTime.UtcNow
                 });
             if (DateTime.UtcNow > userotp.ExpiredTime)
-                return BadRequest(new NotificationDTO
+                return BadRequest(new NotificationResponse
                 {
                     MSG = "Expired Time",
                     TraceId = Guid.NewGuid().ToString(),
@@ -251,12 +252,12 @@ namespace ECommerce.Api.Area.Identity.Controller
         }
 
         [HttpPost("NewPassword")]
-        public async Task<IActionResult> NewPassword(NewPasswordDTO newPasswordDTO)
+        public async Task<IActionResult> NewPassword(NewPasswordRequest newPasswordDTO)
         {
             var user = await _userManager.FindByIdAsync(newPasswordDTO.ApplicationUserId);
 
             if (user is null)
-                return NotFound(new NotificationDTO
+                return NotFound(new NotificationResponse
                 {
                     MSG = "Invalid User name or password",
                     TraceId = Guid.NewGuid().ToString(),
@@ -264,7 +265,7 @@ namespace ECommerce.Api.Area.Identity.Controller
                 });
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             await _userManager.ResetPasswordAsync(user,token, newPasswordDTO.Password);
-            return Ok(new NotificationDTO
+            return Ok(new NotificationResponse
             {
                 MSG = "Change Password Successfully",
                 TraceId = Guid.NewGuid().ToString(),
@@ -276,7 +277,12 @@ namespace ECommerce.Api.Area.Identity.Controller
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Login", "Account", new { area = "Identity" });
+            return Ok(new NotificationResponse
+            {
+                MSG = "Logout Success",
+                TraceId = Guid.NewGuid().ToString(),
+                CreatedAt = DateTime.UtcNow
+            });
         }
     }
 }

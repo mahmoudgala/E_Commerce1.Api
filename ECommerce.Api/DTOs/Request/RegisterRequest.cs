@@ -2,7 +2,7 @@
 
 namespace ECommerce.Api.DTOs.Request
 {
-    public class RegisterDTO
+    public class RegisterRequest
     {
         [Required]
         public string Name { get; set; } = string.Empty;

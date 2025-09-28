@@ -1,6 +1,6 @@
 ﻿namespace ECommerce.Api.DTOs.Response
 {
-    public class NotificationDTO
+    public class NotificationResponse
     {
         public string MSG { get; set; }
         public string TraceId { get; set; }

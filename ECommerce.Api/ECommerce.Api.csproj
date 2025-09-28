@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\images\ProductCreateRequest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Mapster" Version="7.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9" />
@@ -16,14 +20,17 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Scalar.AspNetCore" Version="2.8.5" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.8.6" />
     <PackageReference Include="Stripe.net" Version="48.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.4" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="9.0.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Area\Admin\Controller\" />
     <Folder Include="Area\Chat\Controller\" />
     <Folder Include="Area\Customer\Controller\" />
+    <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
 </Project>

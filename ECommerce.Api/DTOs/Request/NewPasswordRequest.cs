@@ -2,7 +2,7 @@
 
 namespace ECommerce.Api.DTOs.Request
 {
-    public class NewPasswordDTO
+    public class NewPasswordRequest
     {
         [Required, DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
